@@ -28,7 +28,6 @@ h1 {
 
     align-self: center;
     justify-self: center;
-    border: 5px solid rgb(0, 0, 0);
 
 }
 
@@ -38,6 +37,8 @@ h1 {
     display: grid;
     justify-items: center;
     align-items: center;
+    width:100px;
+    height: 100px;
 
 }
 
