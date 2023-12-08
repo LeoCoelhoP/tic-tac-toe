@@ -112,7 +112,7 @@ const game = (function() {
             let turn = "Player One"
             let clicks = 0;
             gridPieces.forEach((piece) => {
-                piece.addEventListener(("click"), () => {
+                piece.addEventListener(("click" || "touchstart"), () => {
                     this.updateScoreBoard();
 
                     position = piece.className;
