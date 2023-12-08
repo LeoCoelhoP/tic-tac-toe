@@ -13,6 +13,9 @@ const gameBoard = (function () {
 
         markGameBoard(position, playerMark) {
             gameboard[position] = playerMark
+        },
+        resetGameBoard() {
+            gameboard = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         }
     }
 
@@ -29,67 +32,146 @@ const displayControler = (function () {
         }
     }
 })();
-// Player
 
-const player = function (name, mark) {
-    playerName =  name;
-    playerMark = mark;
-    points = 0;
-
-    return {
-        getPlayerMark() {
-            return mark;
-        },
-        getPlayerScore() {
-            return points;
-        },
-        score() {
-            points++;
-        }
+class Player {
+    constructor (name, mark){
+        this.playerName = name;
+        this.playerMark = mark;
+        this.points = 0;
     }
-};
+    getPlayerMark() {
+        return this.playerMark;
+    };
+    
+    getPlayerScore() {
+        return this.points;
+    };
+    score() {
+        this.points++;
+    };
+    resetScore() {
+        this.points = 0;
+    };
+}
 
 // Game
 
 const game = (function() {
-    let round = 0;
+    round = 0;
     return {
+        updateScoreBoard() {
+            scoreboard = document.querySelector(".Scoreboard");
+            scoreboard.textContent = `Player one ${playerOne.getPlayerScore()} VS ${playerTwo.getPlayerScore()} Player Two`
+        },
+        roundWinMessge(winner) {
+            winnerDisplay = document.querySelector("h1");
+            
+            if (winner === "Draw") {
+                winnerDisplay.textContent = `Draw!`;
+
+            } else {
+                winnerDisplay.textContent = `${winner} win the round!`;
+
+            }
+        },
+        isGameOver() {
+            round++;
+            console.log(round);
+            winnerDisplay = document.querySelector("h1");
+
+            if (round === 3){
+                if (playerOne.getPlayerScore() > playerTwo.getPlayerScore()) {
+                    winnerDisplay.textContent = "Player One win the game!"
+
+                } else {
+                    winnerDisplay.textContent = "Player Two win the game!"
+
+                }
+
+                playerOne.resetScore();
+                playerTwo.resetScore();
+            }
+        },
+        resetRound() {
+            const gridPieces = document.querySelectorAll("a");
+
+            gridPieces.forEach((piece) => {
+                piece.innerHTML = "";
+            });
+
+            gameBoard.resetGameBoard();
+
+            gridPieces.forEach((piece) => {
+                piece.setAttribute("style", "background: transparent");
+            });
+        },
 
         startRound() {
             
-            playerOne = player("Player 1", "X");
-            playerTwo = player("Player 2", "O");
+            const gridPieces = document.querySelectorAll("a");
+            let turn = "Player One"
+            let clicks = 0;
+            gridPieces.forEach((piece) => {
+                piece.addEventListener(("click"), () => {
+                    this.updateScoreBoard();
 
-            let turn = "Player One";
-            // for (let i = 0; i <= 8; i++) {
+                    position = piece.className;
+                    gameBoard.validPositionChecker(position) ? isValidPosition = true : isValidPosition = false;
+                    if(isValidPosition) {
+                        clicks++;
+                        isValidPosition = true;
 
-            //     let position;
-            //     let isValidPosition = false;
-            //     while (!isValidPosition) {
-            //         position = prompt("Type the position you want to mark");
-            //         gameBoard.validPositionChecker(position) ? isValidPosition = true : isValidPosition = false;
-            //     }
-                
-            //     if (turn === "Player One") {
-            //         turn = "Player two";
+                        if (turn === "Player One") {
+                            turn = "Player two";
+                            gameBoard.markGameBoard(position, playerOne.getPlayerMark());
+                            piece.innerHTML = "X";
+                            piece.setAttribute("Style", "background: red; color: -webkit-box-shadow:0px 0px 105px 30px rgba(255,0,0,0.9); -moz-box-shadow: 0px 0px 105px 30px rgba(255,0,0,0.9); box-shadow: 0px 0px 105px 30px rgba(255,0,0,0.9); text-shadow: rgba(255,0,0,1) 0px 0px 136px;");
+                        } else {
+                            turn = "Player One"
+                            gameBoard.markGameBoard(position, playerTwo.getPlayerMark());
+                            piece.innerHTML = "O";
+                            piece.setAttribute("Style", "background: purple; -webkit-box-shadow:0px 0px 105px 30px rgba(255,0,238,0.9); -moz-box-shadow: 0px 0px 105px 30px rgba(255,0,238,0.9);  box-shadow: 0px 0px 105px 30px rgba(255,0,238,0.9);");
 
-            //         gameBoard.markGameBoard(position, playerOne.getPlayerMark());
-            //     } else {
-            //         turn = "Player One"
-            //         gameBoard.markGameBoard(position, playerTwo.getPlayerMark());
 
-            //     }
-            //     console.log(gameBoard.displayGameBoard());
+                        }  
+                        let isAGameWinner = this.checkWin()
+                        if (typeof isAGameWinner === "number"){
+                            let winner = this.getWinner(isAGameWinner);
+                            winner === "Player One" ? playerOne.score() : playerTwo.score() ;
+                            this.resetRound();
+                            this.updateScoreBoard();
+                            clicks = 0;
+                            this.roundWinMessge(winner);                            
+                            this.isGameOver()
 
-            //     let isAGameWinner = this.checkWin()
-            //     if (typeof isAGameWinner === "number"){
-            //         let winner = this.getWinner(isAGameWinner);
-            //         winner === "Player One" ? playerOne.score() : playerTwo.score() ;
-            //         console.log("Winner is " + winner)
-            //         console.log("score" + playerOne.getPlayerScore());
-            //         break;
-            //     }
-            // }
+                        }
+
+                        if (clicks === 9) {
+                            this.resetRound();
+                            clicks = 0;
+                            this.roundWinMessge("Draw");
+
+                            this.isGameOver()
+
+                        }
+                    }
+                    
+
+                });
+            });
+
+        },
+
+        startGame() {
+            playerOne = new Player("Player 1", "X");
+            playerTwo = new Player("Player 2", "O");  
+            this.startRound()
+
+
+
+
+
+ 
         },
 
         checkWin() {
