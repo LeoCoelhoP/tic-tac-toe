@@ -37,8 +37,8 @@ h1 {
     display: grid;
     justify-items: center;
     align-items: center;
-    width:100px;
-    height: 100px;
+    width: minmax(100px, 1fr);
+    height: minmax(100px, 1fr);
 
 }
 
