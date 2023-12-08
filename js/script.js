@@ -89,7 +89,7 @@ const game = (function() {
                 }
 
                 playerOne.resetScore();
-                playerTwo.resetScore();
+                playerTwo.resetRound();
             }
         },
         resetRound() {
@@ -112,7 +112,7 @@ const game = (function() {
             let turn = "Player One"
             let clicks = 0;
             gridPieces.forEach((piece) => {
-                piece.addEventListener(("click" || "touchstart"), () => {
+                piece.addEventListener(("click"), () => {
                     this.updateScoreBoard();
 
                     position = piece.className;
@@ -211,5 +211,5 @@ const game = (function() {
     }
 })();
 
-game.startRound();
+game.startGame();
 
